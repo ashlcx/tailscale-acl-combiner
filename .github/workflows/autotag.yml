@@ -1,0 +1,22 @@
+name: Auto-Tag Merge
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: .
+
+      - name: Create tag
+        run: |
+          git fetch --tags origin main
+          git checkout $(git describe --tags origin/main)
+          git push origin --tags "merge-$(git merge-base main HEAD)"
