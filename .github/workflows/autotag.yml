@@ -1,15 +1,25 @@
-name: Create Tag
+name: Auto Tag
 
 on:
-  push:
+    push:
     branches:
       - main
 
 jobs:
-  build:
+  tag:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
-    - uses: Klemensas/action-autotag@stable
-      with:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create tag
+        id: tag
+        run: echo "TAG=v1.0.${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: Push tag
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
