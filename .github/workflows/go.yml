@@ -27,15 +27,8 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - name: Create release
-      uses: actions/create-release@v3
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        RELEASE_TITLE: 'Release ${GITHUB_RUN_NUMBER}'
-        RELEASE_BODY: 'This is a new release of the Go program.'
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
       with:
-        name: tailscale-acl-combiner-linux-x86_64
-        path: tailscale-acl-combiner
+        files: tailscale-acl-combiner
